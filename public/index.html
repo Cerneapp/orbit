@@ -118,7 +118,7 @@ header{padding:0 6px}
     <div class="logo"><i></i>Orbit</div>
     <p id="sub">Salas para compartilhar tela com seus amigos. Sem cadastro.</p>
     <input id="name" placeholder="Seu nome" maxlength="24">
-    <input id="pass" type="password" placeholder="Senha da sala (opcional)" maxlength="40">
+    <input id="pass" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Senha da sala (opcional)" maxlength="40" style="-webkit-text-security:disc">
     <button class="btn pri" id="go">Criar sala</button>
     <div class="or" id="or">ou entre com um código</div>
     <input id="code" placeholder="Código da sala" maxlength="40">
@@ -186,7 +186,7 @@ let ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'}]}; // p/ produção, 
 // ---------- Landing ----------
 const pre=location.pathname.split('/')[2];
 $('#name').value=localStorage.getItem('orbit-name')||'';
-if(pre){$('#go').classList.add('hide');$('#or').classList.add('hide');$('#code').classList.add('hide');$('#join').textContent='Entrar na sala';$('#sub').textContent='Você foi convidado para uma sala.'}
+if(pre){$('#pass').classList.add('hide');$('#go').classList.add('hide');$('#or').classList.add('hide');$('#code').classList.add('hide');$('#join').textContent='Entrar na sala';$('#sub').textContent='Você foi convidado para uma sala.'}
 const rand=()=>Math.random().toString(36).slice(2,8);
 function start(id){
   const n=$('#name').value.trim()||'Convidado'+Math.floor(Math.random()*900+100);
@@ -226,7 +226,8 @@ function on(m){
   else if(m.t==='react')react(m.e);
   else if(m.t==='owner'){owner=m.id;ui()}
   else if(m.t==='cfg'){restrict=m.restrict;ui();if(restrict&&me!==owner)stop('screen')}
-  else if(m.t==='denied'){left=1;alert('Senha incorreta.');location.reload()}
+  else if(m.t==='denied'){const p=prompt(m.wrong?'Senha incorreta. Tente de novo:':'Esta sala tem senha. Digite para entrar:');
+    if(p===null){left=1;location.href='/'}else{myPass=p;send({t:'join',room:roomId,name:myName,pass:p})}}
   else if(m.t==='kicked'){left=1;alert('Você foi removido da sala.');location.reload()}
 }
 function drop(id,say){const p=peers[id];if(!p)return;say&&sys(p.name+' saiu');p.pc.close();p.tiles.forEach(rmTile);delete peers[id];renderPeople()}
