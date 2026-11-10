@@ -24,7 +24,7 @@ wss.on('connection', ws => {
       const room = String(m.room || '').slice(0, 40);
       const id = String(++n);
       const set = rooms.get(room) || Object.assign(new Map(), { pass: String(m.pass || '').slice(0, 40), owner: id, restrict: false });
-      if (set.size && set.pass && m.pass !== set.pass) return ws.send(J({ t: 'denied' }));
+      if (set.size && set.pass && m.pass !== set.pass) return ws.send(J({ t: 'denied', wrong: !!m.pass }));
       ws.room = room; ws.id = id; ws.name = String(m.name || 'Anônimo').slice(0, 24);
       rooms.set(room, set);
       ws.send(J({ t: 'welcome', id, owner: set.owner, restrict: set.restrict,
